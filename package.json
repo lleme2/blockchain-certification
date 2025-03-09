@@ -1,0 +1,27 @@
+{
+  "name": "blockchain-certification",
+  "version": "1.0.0",
+  "description": "Projeto TCC de cerificação e verificação de documentos com blockchain",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://%3C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%3E@github.com/lleme2/blockchain-certification.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/lleme2/blockchain-certification/issues"
+  },
+  "homepage": "https://github.com/lleme2/blockchain-certification#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "ethers": "^6.13.5",
+    "express": "^4.21.2"
+  }
+}
