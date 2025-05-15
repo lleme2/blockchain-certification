@@ -1,0 +1,12 @@
+
+.titulo-destaque {
+  background-color: #f0f6ff; /* cor de fundo */
+  display: block;
+  padding: 20px 40px;
+  border-radius: 8px;
+  width: 100%;
+  text-align: center;
+}
+.h2_color{
+  background-color: #f0f6ff;
+}
