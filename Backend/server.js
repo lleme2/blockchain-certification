@@ -126,6 +126,8 @@ app.get("/verify/:hash", async (req, res) => {
       owner: result[2],
     });
   } catch (error) {
+    const { hash } = req.params;
+    console.log(hash)
     res.status(500).json({ error: error.message });
   }
 });

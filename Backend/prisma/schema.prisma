@@ -1,0 +1,17 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Arquivo {
+  id             Int      @id @default(autoincrement())
+  nomeOriginal   String
+  hash           String   @unique
+  certificado    Boolean  @default(false)
+  caminhoArquivo String
+  dataUpload     DateTime @default(now())
+}
