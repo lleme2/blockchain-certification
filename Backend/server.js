@@ -146,14 +146,17 @@ app.post("/certify", async (req, res) => {
     // Enviar a transação para a blockchain
     const tx = await contractWithSigner.certifyDocument(hash);
     await tx.wait(); // Aguarda a transação ser confirmada
-
+    console.log({
+      message: "Documento certificado com sucesso!",
+      transactionHash: tx.hash,
+    })
     res.json({
       message: "Documento certificado com sucesso!",
       transactionHash: tx.hash,
     });
   } catch (error) {
-    console.log(error)
-    res.status(500).json({ error: error.message });
+    console.log("Erro certify: " + error)
+    res.status(500).json({ error: "Erro certify" });
   }
 });
 
