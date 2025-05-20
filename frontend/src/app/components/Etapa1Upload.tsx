@@ -1,8 +1,15 @@
 "use client";
 import { useState } from "react";
 const axios = require("axios");
+import React, { Dispatch, SetStateAction } from "react";
 
-export default function Etapa1Upload() {
+type ComponenteAProps = {
+  setDado: Dispatch<SetStateAction<string>>;
+};
+
+let hash;
+
+export default function Etapa1Upload({ setDado }: ComponenteAProps) {
   const [documento, setDocumento] = useState<File | null>(null);
   const handleSelecionarArquivo = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -29,6 +36,7 @@ export default function Etapa1Upload() {
         }
       );
       localStorage.setItem("Hash", response.data.hash);
+      setDado(response.data.hash);
     } catch (error) {
       console.error("Erro ao enviar:", error);
     }

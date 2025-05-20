@@ -2,12 +2,14 @@
 const axios = require("axios");
 import { useState, useEffect } from "react";
 
-export default function Etapa2Hash() {
-  const [hash, setHash] = useState("");
+type ComponenteBProps = {
+  dado: string;
+};
+
+export default function Etapa2Hash({ dado }: ComponenteBProps) {
+  const hash = dado;
   const handleClick = async () => {
     try {
-      let hash_temp = localStorage.getItem("Hash");
-      setHash(hash_temp || "");
       const response = await axios.post("http://localhost:8080/certify", {
         hash: hash,
       });
@@ -33,7 +35,7 @@ export default function Etapa2Hash() {
       <h5 className="fw-bold mb-3 ">Hash do arquivo</h5>
       <input
         type="text"
-        value={hash || "Aqui você verá a Hash do seu documento."}
+        value={dado || "Aqui você verá a Hash do seu documento."}
         className="form-control mb-2 text-center conteudo-topo"
         readOnly
       />
