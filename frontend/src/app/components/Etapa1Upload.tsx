@@ -54,7 +54,16 @@ export default function Etapa1Upload({ setDado }: ComponenteAProps) {
     <div className="card text-center shadow-sm p-4 card-etapa">
       <div className="etapa-numero">1</div>
       <div className="mb-4">
-        <h5 className="fw-bold mb-2">Escolha ou crie um documento</h5>
+        <a
+          href="#"
+          className="fw-bold mb-2"
+          style={{
+            fontSize: "1.5rem",
+            color: "black",
+            textDecoration: "none",
+          }}>
+          Escolha ou crie um documento
+        </a>
       </div>
       <div className="flex-grow-1 d-flex flex-column justify-content-center">
         <input

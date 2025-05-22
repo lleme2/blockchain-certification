@@ -1,43 +1,66 @@
 "use client";
+import React, { useState } from "react";
 import axios, { AxiosResponse } from "axios";
-import { useState, useEffect } from "react";
 
 type VerifyResponse = {
-  documentHash?: string;
-  // outros campos que vierem na resposta
+  owner?: string;
 };
 
 export default function Etapa3Verificacao() {
-  const [valor, setValor] = useState("");
+  const [valor, setValor] = useState<string>(""); // valor digitado
+  const [resultado, setResultado] = useState<string>(""); // resposta da verificação
 
-  async function handleEnviar(): Promise<void> {
+  async function verificar(hash: string) {
     try {
       const response: AxiosResponse<VerifyResponse> = await axios.get(
-        `/verify/${valor}`
+        `http://localhost:8080/verify/${hash}`
       );
-      console.log("Resposta:", response.data);
+      console.log(response);
+      setResultado(response.data.owner || "Hash não encontrada");
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      setResultado("Erro ao buscar hash");
     }
   }
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     setValor(event.target.value);
-    setValor(event.target.value); // pega o valor digitado
+  }
+
+  function handleClick() {
+    if (valor.trim() !== "") {
+      verificar(valor.trim());
+    } else {
+      setResultado("Digite uma hash para verificar.");
+    }
   }
 
   return (
     <div className="card text-center shadow-sm p-4 card-etapa">
       <div className="etapa-numero">3</div>
-      <h5 className="fw-bold mb-3">Verificar a autenticidade</h5>
+      <a
+        href="#"
+        className="fw-bold mb-2"
+        style={{
+          fontSize: "1.5rem",
+          color: "black",
+          textDecoration: "none",
+        }}>
+        Verificar a autenticidade
+      </a>
       <input
         type="text"
         placeholder="Hash ou arquivo do documento"
-        value={valor}
-        className="form-control mb-2 conteudo-topo mb-3"
+        className="form-control mb-2 conteudo-topo mt-2"
         onChange={handleChange}
+        value={valor}
       />
-      <button className="btn btn-primary btn-sm w-100" onClick={handleEnviar}>
+      {"Owner: " + resultado && (
+        <div className="mt-3 alert alert-light border text-break">
+          Owner: {resultado}
+        </div>
+      )}
+      <button className="btn btn-primary btn-sm w-100" onClick={handleClick}>
         Verificar
       </button>
     </div>
