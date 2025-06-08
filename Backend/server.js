@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const { ethers } = require("ethers");
+const { ethers, Wallet } = require("ethers");
 const cors = require("cors");
 const multer = require("multer");
 const fs = require("node:fs");
@@ -8,122 +8,171 @@ const path = require('path');
 const prisma = require('./lib/prisma');
 const { JsonRpcProvider, Contract } = ethers;
 const  generateFileHash = require("./utils/generateHash");
-
+const { resourceUsage } = require("node:process");
 const app = express();
 app.use(cors());
 app.use(express.json());
+
 const provider = new JsonRpcProvider(process.env.ALCHEMY_URL);
 const contractAddress = process.env.CONTRACT_ADDR;
 const abi = [
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "string",
-        name: "hash",
-        type: "string",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "timestamp",
-        type: "uint256",
-      },
-    ],
-    name: "DocumentCertified",
-    type: "event",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_docHash",
-        type: "string",
-      },
-    ],
-    name: "certifyDocument",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    name: "documents",
-    outputs: [
-      {
-        internalType: "string",
-        name: "hash",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "timestamp",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_docHash",
-        type: "string",
-      },
-    ],
-    name: "verifyDocument",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-];
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "string",
+						"name": "hash",
+						"type": "string"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes",
+						"name": "publicKey",
+						"type": "bytes"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes",
+						"name": "signature",
+						"type": "bytes"
+					}
+				],
+				"name": "DocumentCertified",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_docHash",
+						"type": "string"
+					},
+					{
+						"internalType": "bytes",
+						"name": "_publicKey",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes",
+						"name": "_signature",
+						"type": "bytes"
+					}
+				],
+				"name": "certifyDocument",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"name": "documents",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "hash",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes",
+						"name": "publicKey",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes",
+						"name": "signature",
+						"type": "bytes"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_docHash",
+						"type": "string"
+					}
+				],
+				"name": "verifyDocument",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes",
+						"name": "publicKey",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes",
+						"name": "signature",
+						"type": "bytes"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		]
+const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+    const contract = new Contract(contractAddress, abi, wallet);
+    const contractWithSigner = contract.connect(wallet);
 
-const contract = new Contract(contractAddress, abi, provider);
 
-app.get("/verify/:hash", async (req, res) => {
+app.post("/verify", async (req, res) => {
   try {
-    const { hash } = req.params;
-    const result = await contract.verifyDocument(hash);
-
+	const wallet = new Wallet(process.env.PRIVATE_KEY);
+	console.log("Endereco da api: " + wallet.address);  
+    const { hash, dado } = req.body;
+    const result = await contractWithSigner.verifyDocument(hash);
+    console.log(result)
     res.json({
       exists: result[0],
       timestamp: result[1].toString(),
       owner: result[2],
+	  publicKey: result[3].toString(),
+	  signature: result[4].toString(),
     });
   } catch (error) {
     const { hash } = req.params;
@@ -133,22 +182,20 @@ app.get("/verify/:hash", async (req, res) => {
 });
 
 app.post("/certify", async (req, res) => {
+	
   try {
-    const { hash } = req.body;
-    if (!hash) {
+	const wallet = new Wallet(process.env.PRIVATE_KEY);
+	console.log("Endereco da api: " + wallet.address);
+    const { hash,signature,publicKey } = req.body;
+    if (!hash || !signature || !publicKey) {
       return res
         .status(400)
-        .json({ error: "O hash do documento é obrigatório." });
+        .json({ error: "Esta faltando alguma coisa." });
     }
-
-    // Criando uma carteira a partir da chave privada
-    const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
-    const contractWithSigner = contract.connect(wallet);
-
-    // Enviar a transação para a blockchain
-    const tx = await contractWithSigner.certifyDocument(hash);
-    await tx.wait(); // Aguarda a transação ser confirmada
-
+    
+    console.log(req.body)
+    const tx = await contractWithSigner.certifyDocument(hash,publicKey,signature);
+    await tx.wait();  
     res.json({
       message: "Documento certificado com sucesso!",
       transactionHash: tx.hash,
@@ -158,7 +205,6 @@ app.post("/certify", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 const upload = multer({ dest: "./uploads/" });
 

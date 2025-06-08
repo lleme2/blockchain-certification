@@ -25,48 +25,13 @@ export default function Etapa2Hash({ dado }: ComponenteBProps) {
   useEffect(() => {
     if (dado && dado.trim() !== "") {
       setHashDocumento("Hash do documento: " + dado);
-      setHashTransacao("Aqui você verá a hash da transação");
     } else {
       setHashDocumento("Aqui você verá a Hash do seu documento.");
     }
   }, [dado]);
 
-  // Atualiza hashTransacao quando response mudar
-  useEffect(() => {
-    if (
-      response_data?.data?.transactionHash &&
-      response_data.data.transactionHash.trim() !== ""
-    ) {
-      setHashTransacao(
-        "Hash da transação: " + response_data.data.transactionHash
-      );
-    } else {
-      setHashTransacao("Aqui você verá a hash da transação");
-    }
-  }, [response_data]);
-  const hash = dado;
-  const handleClick = async () => {
-    try {
-      const response = await axios.post("http://localhost:8080/certify", {
-        hash: hash,
-      });
-      console.log(response);
-      setResponse(response);
-    } catch (error) {
-      console.log("Hash salva: " + hash);
-      console.error("Erro ao enviar:", error);
-    }
-  };
-
-  const teste = async () => {
-    setHashTransacao(
-      "0xb1fa2af5f1d6f1ac1c467c8209412c12c816f3f2a2b658ea2ee3bb9b59259c6e"
-    );
-    console.log(hashTransacao);
-  };
-
   return (
-    <div className="card text-center shadow-sm p-4 card-etapa">
+    <div className="card text-center shadow-sm p-4 size_component card-etapa">
       <div className="etapa-numero">2</div>
       <a
         href="#"
@@ -78,19 +43,15 @@ export default function Etapa2Hash({ dado }: ComponenteBProps) {
         }}>
         Hash do arquivo
       </a>
+      <div>
+        <img src="/img_hash.png" alt="Certificar" style={{ height: "100px" }} />
+      </div>
+
       <input
         className="form-control  text-center conteudo-topo"
         value={hashDocumento}
         readOnly
       />
-      <input
-        className="form-control mt-2 mb-2 text-center conteudo-topo"
-        value={hashTransacao}
-        readOnly
-      />
-      <button className="btn btn-primary btn-sm w-100" onClick={handleClick}>
-        Certificar
-      </button>
     </div>
   );
 }

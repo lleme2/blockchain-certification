@@ -10,13 +10,15 @@ const navLinks = [
 function App() {
   return (
     <>
-      <NavBar brand="BlockTuto" links={navLinks} />
       <h1 className="titulo-destaque mb-0">
-        Certificação de Documentos com Blockchain: Aprenda e Experimente!
+        Certificação de Documentos com Blockchain: Garanta a integridade dos
+        seus arquivos!
       </h1>
       <Grid1></Grid1>
       <div className="container py-5">
-        <h2 className="fw-bold text-center mb-4">Tutorial Interativo</h2>
+        <h2 className="fw-bold text-center mb-4">
+          Certifique ou valide seu documento
+        </h2>
         <TutorialWrapper />
       </div>
     </>

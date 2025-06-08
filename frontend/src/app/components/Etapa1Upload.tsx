@@ -51,7 +51,7 @@ export default function Etapa1Upload({ setDado }: ComponenteAProps) {
     console.log("Enviando documento:", documento.name);
   };
   return (
-    <div className="card text-center shadow-sm p-4 card-etapa">
+    <div className="card text-center shadow-sm p-4 size_component card-etapa">
       <div className="etapa-numero">1</div>
       <div className="mb-4">
         <a
