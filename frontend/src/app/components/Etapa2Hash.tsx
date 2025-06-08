@@ -2,47 +2,56 @@
 const axios = require("axios");
 import { useState, useEffect } from "react";
 
-export default function Etapa2Hash() {
-  const [hash, setHash] = useState("");
-  const handleClick = async () => {
-    try {
-      let hash_temp = localStorage.getItem("Hash");
-      setHash(hash_temp || "");
-      const response = await axios.post("http://localhost:8080/certify", {
-        hash: hash,
-      });
-      console.log(response);
-    } catch (error) {
-      console.log("Hash salva: " + hash);
-      console.error("Erro ao enviar:", error);
-    }
-  };
+type ComponenteBProps = {
+  dado: string;
+};
 
-  const teste = async () => {
-    try {
-      const response = await axios.get("http://localhost:8080/arquivos");
-      console.log(response);
-    } catch (err) {
-      console.log(err);
-    }
+type ResponseType = {
+  data: {
+    transactionHash?: string;
   };
+};
+
+export default function Etapa2Hash({ dado }: ComponenteBProps) {
+  const [hashTransacao, setHashTransacao] = useState(
+    "Aqui você verá a hash da transação"
+  );
+  const [hashDocumento, setHashDocumento] = useState(
+    "Aqui você verá a Hash do seu documento."
+  );
+  const [response_data, setResponse] = useState<ResponseType | null>(null);
+
+  // Atualiza hashDocumento quando dado muda
+  useEffect(() => {
+    if (dado && dado.trim() !== "") {
+      setHashDocumento("Hash do documento: " + dado);
+    } else {
+      setHashDocumento("Aqui você verá a Hash do seu documento.");
+    }
+  }, [dado]);
 
   return (
-    <div className="card text-center shadow-sm p-4 card-etapa">
+    <div className="card text-center shadow-sm p-4 size_component card-etapa">
       <div className="etapa-numero">2</div>
-      <h5 className="fw-bold mb-3 ">Hash do arquivo</h5>
+      <a
+        href="#"
+        className="fw-bold mb-2"
+        style={{
+          fontSize: "1.5rem",
+          color: "black",
+          textDecoration: "none",
+        }}>
+        Hash do arquivo
+      </a>
+      <div>
+        <img src="/img_hash.png" alt="Certificar" style={{ height: "100px" }} />
+      </div>
+
       <input
-        type="text"
-        value={hash || "Aqui você verá a Hash do seu documento."}
-        className="form-control mb-2 text-center conteudo-topo"
+        className="form-control  text-center conteudo-topo"
+        value={hashDocumento}
         readOnly
       />
-      <a href="#" className="small text-primary mb-2 d-block tag-a">
-        O que é isso?
-      </a>
-      <button className="btn btn-primary btn-sm w-100" onClick={handleClick}>
-        Certificar
-      </button>
     </div>
   );
 }

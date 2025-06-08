@@ -11,6 +11,15 @@
   background-color: #f0f6ff;
 }
 
+.size_component{
+  max-height: 280px;
+}
+
+.size_component2{
+  max-height: 280px;
+  width: 100%;
+}
+
 .etapa-numero {
   position: absolute;
   top: 10px;
@@ -30,13 +39,26 @@
 .card-etapa {
   min-height: 280px;
 }
+ .size_input{
+  min-height: 40px;
+ }
 
 .card-etapa .conteudo-topo {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  border: 2px solid #a5a5a5; 
+  border-radius: 4px;
 }
+
+.card-etapa2 {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 
 .card-etapa h5 {
   font-size: 1.25rem; /* maior que o padrão */
@@ -77,4 +99,8 @@
 .input-arquivo:hover {
   border-color: #084298;
   cursor: pointer;
+}
+
+.btn_cert{
+  width: 50%;
 }
