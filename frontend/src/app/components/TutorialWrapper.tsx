@@ -5,15 +5,23 @@ import Etapa5Certificacao from "./Etapa5Certificacao";
 import Etapa3Verificacao from "./Etapa3Verificacao";
 import { use, useState } from "react";
 import Etapa4Assinatura from "./Etapa4Assinatura";
+import UploadKeys from "./UploadKeys";
 import DownloadPrivateKeyButton from "./DownloadPrivateKeyButton";
 
-export default function TutorialWrapper() {
+type ComponenteBProps = {
+  isLoggedIn: boolean;
+};
+
+export default function TutorialWrapper({ isLoggedIn }: ComponenteBProps) {
   const [key, setKey] = useState("");
   const [dado, setDado] = useState("");
   const [signature, setSignature] = useState("");
   const [signatureVer, setSignatureVer] = useState("");
   const [publicKeyVer, setpublicKeyVer] = useState("");
+  const [publickeyImport, setpublickeyImport] = useState("");
+  const [privatekeyImport, setprivatekeyImport] = useState("");
   const [privatePEM, setPrivatePEM] = useState("");
+  const [keyPEM, setkeyPEM] = useState("");
   return (
     <>
       <div className="row gy-2">
@@ -27,10 +35,13 @@ export default function TutorialWrapper() {
           <Etapa4Assinatura
             dado={dado}
             setKey={setKey}
+            setKeyPEM={setkeyPEM}
             setSignature={setSignature}
             setPrivatePem={setPrivatePEM}
             signatureVer={signatureVer}
             publicKeyVer={publicKeyVer}
+            ppublicKeyImport={publickeyImport}
+            privateKeyImport={privatekeyImport}
           />
         </div>
         <div className="col-md-6 order-md-4">
@@ -42,10 +53,25 @@ export default function TutorialWrapper() {
         </div>
       </div>
       <div className="mt-4">
-        <Etapa5Certificacao dado={dado} keyPublic={key} signature={signature} />
+        <UploadKeys
+          setpublickeyImport={setpublickeyImport}
+          setprivatekeyImport={setprivatekeyImport}
+        />
+      </div>
+      <div className="mt-4">
+        <Etapa5Certificacao
+          dado={dado}
+          keyPublic={key}
+          signature={signature}
+          isLoggedIn={isLoggedIn}
+          publickeyImport={publickeyImport}
+          privatekeyImport={privatekeyImport}
+        />
         <DownloadPrivateKeyButton
           privateKeyPem={privatePEM}
-          fileName={"privateKeyPEM"}
+          publicKeyPem={keyPEM}
+          fileName_private={"privateKeyPEM"}
+          fileName_public={"publicKeyPEM"}
         />
       </div>
     </>

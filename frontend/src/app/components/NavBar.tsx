@@ -1,40 +1,56 @@
+"use client";
 import React from "react";
+import "../styles/NavBar.css"; // Importa o arquivo CSS para estilização
 
-interface NavBarProps {
-  brand: string;
-  links: { label: string; href: string }[];
+// Define a interface para as propriedades do link
+interface NavLink {
+  label: string;
+  href: string;
 }
 
-const NavBar: React.FC<NavBarProps> = ({ brand, links }) => {
+// Define a interface para as propriedades do NavBar
+interface NavBarProps {
+  links: NavLink[];
+  onLinkClick: (href: string) => void;
+  onLoginClick: () => void;
+  onRegisterClick: () => void;
+}
+
+const NavBar: React.FC<NavBarProps> = ({
+  links,
+  onLinkClick,
+  onLoginClick,
+  onRegisterClick,
+}) => {
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-      <div className="container-fluid">
-        <a className="navbar-brand" href="/">
-          {brand}
-        </a>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto">
-            {links.map((link, index) => (
-              <li className="nav-item" key={index}>
-                <a className="nav-link" href={link.href}>
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
+    <>
+      <nav className="navbar">
+        <div className="nav-links">
+          {links.map((link) => (
+            <a
+              key={link.href}
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                onLinkClick(link.href);
+              }}
+              className="nav-link">
+              {link.label}
+            </a>
+          ))}
         </div>
-      </div>
-    </nav>
+        <div className="nav-actions">
+          {}
+          <button onClick={onRegisterClick} className="button register-button">
+            Registre-se
+          </button>
+          {}
+          <button onClick={onLoginClick} className="button login-button">
+            Login
+          </button>
+        </div>
+      </nav>
+    </>
   );
 };
 
